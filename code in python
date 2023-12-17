@@ -1,0 +1,95 @@
+'''import mysql.connector as mysql
+
+db = mysql.connect(
+    host = "localhost",
+    user = "root",
+    passwd = "1234"
+)
+
+cursor = db.cursor()
+
+cursor.execute("SHOW DATABASES")
+
+databases = cursor.fetchall()
+'''
+import matplotlib.pyplot as plt
+
+#Database of shop info along with items
+#'loc':[floor no., map x loc, map y loc]
+# all items should be in LOWER CASE ONLY!!!
+# itesm under categories should have full names 
+db = {'nike': {'items':{'shirt':['cotton shirt', 'basketball jersey', 'running shirt'], 'track pant':['cotton track pant', 'dry fit track pant', 'slim fit pant', 'tights', 'sweatpant'], 'sock':'', 'basketball':'', 'jacket':['winter jacket', 'hoody', 'dry fit jacket', 'jacket'], 'shoe':['sneaker', 'canvas', 'hiking shoe']}, 'loc':[1, 46.5, 5.5]},
+      'health & glow': {'items': ['perfume', 'deodrant', 'nail polish', 'candy', 'chocolate', 'candy', 'snack', 'shampoo', 'soap', 'sanitary', 'diaper', 'first aid'], 'loc':[1, 55, 12]},
+      'fabindia': {'items': ['kurta', 'shirt', 'saree', 'dresse', 'ethnic', 'pant', 'plazzo', 'jacket', 'jewellery'], 'loc':[1, 55, 5]},
+      'Sapna Book House': {'items': ['textbooks', 'novel', 'toys', 'stationary', 'gift', 'showcase'], 'loc':[1, 52, 22]},
+      'DMart': {'items':{'meat':['chicken', 'duck', 'lamb'], 'fresh':['vegetables', 'fruits', 'legumes'], 'diary':['milk', 'butter', 'ice cream', 'yogurt', 'chocolate'], 'breverages':['tea', 'coffee', 'soft drinks'], 'kitchenware':['tools', 'utensils', 'cookware']}, 'loc':[0, 55, 5]},
+      'yamaha music': {'items': ['guitar', 'piano', 'violin', 'flute', 'drum'], 'loc':[1, 5, 15]},
+      'hamleys': {'items': ['bath toy', 'board game', 'doll', 'radio controlled', 'gift'], 'loc':[0, 4, 17]},
+      'croma': {'items': ['phone', 'tablet', 'laptop', 'desktop', 'tv', 'video game', 'dvd', 'cd', 'computer', 'accesory', 'mobile'], 'loc':[0, 4, 6]},
+      'lee': {'items':{'outwear':['jeans', 'denim', 'hat'], 'shirt':['cotton shirt', 'casuals'], 'sock':'', 'shoe':['running shoe', 'sneaker', 'gym shoe']}, 'loc':[0, 56, 18]},
+      'Tanishq': {'items':{'necklace':['gold necklace', 'diamond necklace'], 'rings':['gold ring', 'silver ring', 'diamond ring'], 'nose rings':['gold', 'silver', 'diamond'], 'ear rings':['gold', 'silver', 'diamond'] },'loc':[1, 6, 5]}}
+
+
+def displayOnMap(shop):
+    loc = db[shop]['loc']
+    img = plt.imread("maps/"+str(loc[0])+".png")
+    fig, ax = plt.subplots()
+    ax.imshow(img, extent=[0, 60, 0, 27])
+    ax.scatter([loc[1]], [loc[2]])
+    plt.show()
+    return 0
+
+### interface
+
+while True:
+    print("1) search by item \n2) locate shops \n3) quit")
+    inp = int(input("? "))
+    if inp == 3:
+        print("Thanks for using")
+        break
+    elif inp == 1:
+        item = input("enter item name (note: use signular form) \nitem? ").lower()
+        options = []
+        for shop in db.keys():
+            
+            if type(db[shop]['items']) is list:
+                if item in db[shop]['items']:
+                    print(item, "found at", shop, "in floor #", str(db[shop]['loc'][0]))
+                    options.append(shop)
+            else:
+                if item in db[shop]['items'].keys():
+                    print(item, "found at", shop, "in floor #", str(db[shop]['loc'][0]))
+                    options.append(shop)
+                else:
+                    for category in db[shop]['items'].keys():
+                        if item in db[shop]['items'][category]:
+                            print(item, "found in the", category, 'section at', shop, "in floor #", str(db[shop]['loc'][0]))
+                            options.append(shop)
+        if len(options) > 0:
+            print("0) I don't want to view shop")
+            for i, shop in enumerate(options):
+                print(str(i+1)+") "+shop)
+            
+            inp_v = int(input("which would you like to visit ?"))
+            if inp_v == 0:
+                continue
+            else:
+                displayOnMap(options[inp_v-1])
+                break
+        else:
+            print("sorry item not found, try the explore shops option to view items")
+    
+    elif inp == 2:
+        shops = list(db.keys())
+        print("0) I don't want to view shop")
+        for i, shop in enumerate(shops):
+            print(str(i+1)+") "+shop)
+        inp_v = int(input("which would you like to visit ?"))
+        if inp_v == 0:
+            continue
+        else:
+            displayOnMap(shops[inp_v-1])
+            break
+            
+    else:
+        print("INVALID INPUT!")
